@@ -3,11 +3,13 @@ CARD_LIMIT = 90
   attr_reader :balance
   attr_reader :full
   attr_accessor :in_journey
+  attr_reader :entry_station
 
   def initialize(balance = 0, full = CARD_LIMIT, in_journey = false)
     @balance = balance
     @full = full
     @in_journey = in_journey
+    
   end
 
   def top_up
@@ -32,8 +34,9 @@ CARD_LIMIT = 90
     @in_journey
   end
 
-  def touch_in
+  def touch_in(station)
     if sufficient_funds?
+      @entry_station = station
       @in_journey = true
     else
       "Insufficient funds. Touch in denied."

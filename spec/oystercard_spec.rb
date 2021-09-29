@@ -1,6 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do
+  let(:station){ double :station }
 
   it 'has a balance of zero' do
     expect(subject.balance).to eq(0)
@@ -33,20 +34,29 @@ describe Oystercard do
   it 'is in journey when touched in' do
     oyster = Oystercard.new
     oyster.top_up
-    oyster.touch_in
+    oyster.touch_in(station)
     expect(oyster.in_journey).to eq(true)
   end
 
   it 'is not in journey when touched out' do 
     oyster = Oystercard.new
-    oyster.touch_in
+    oyster.touch_in(station)
     oyster.touch_out
     expect(oyster.in_journey).to eq(false)
   end
 
   it 'does not touch in if balance if less than 1' do
-    expect(subject.touch_in).to eq("Insufficient funds. Touch in denied.")
+    expect(subject.touch_in(station)).to eq("Insufficient funds. Touch in denied.")
   end 
+  
+  it 'stores the entry station' do
+    subject.top_up
+    subject.touch_in(station)
+    expect(subject.entry_station).to eq(station)
+  end
+
+
+
 
 end
 
