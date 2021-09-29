@@ -1,30 +1,27 @@
 class Oystercard
 CARD_LIMIT = 90
+MINIMUM_CHARGE = 5
 MINIMUM_BALANCE = 1
-  attr_reader :balance
-  attr_reader :full
+  attr_reader :balance, :entry_station
   attr_accessor :in_journey
-  attr_reader :entry_station
 
-  def initialize(balance = 0, full = CARD_LIMIT, in_journey = false, fee = MINIMUM_BALANCE
-    @balance = balance
-    @full = full
-    @in_journey = in_journey
-    
+  def initialize
+    @balance = 0
+    @in_journey = false
   end
 
-  def top_up
-    fail "Cannot topup. Limit reached of #{@full}." if limit?
-    @balance += 10
+  def top_up(value)
+    fail "Cannot topup. Limit reached of #{CARD_LIMIT}." if limit?(value)
+    @balance += value
   end
 
-  def limit?
-    @balance >= @full
+  def limit?(value)
+    @balance + value > CARD_LIMIT
   end
 
   def deduct
     fail "No money to deduct." if empty?
-    @balance -= 5
+    @balance -= MINIMUM_CHARGE
   end
 
   def empty?
@@ -50,7 +47,7 @@ MINIMUM_BALANCE = 1
   end
 
   def sufficient_funds?
-    @balance >= 1
+    @balance >= MINIMUM_BALANCE
   end
 
 end
