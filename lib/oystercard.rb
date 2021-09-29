@@ -16,7 +16,7 @@ MINIMUM_BALANCE = 1
   end
 
   def limit?(value)
-    @balance + value > CARD_LIMIT
+    @balance + value >= CARD_LIMIT
   end
 
   def deduct
@@ -33,12 +33,9 @@ MINIMUM_BALANCE = 1
   end
 
   def touch_in(station)
-    if sufficient_funds?
+    fail "Insufficient funds. Touch in denied." unless sufficient_funds?
       @entry_station = station
       @in_journey = true
-    else
-      "Insufficient funds. Touch in denied."
-    end
   end
 
   def touch_out 
