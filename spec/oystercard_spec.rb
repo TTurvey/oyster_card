@@ -3,7 +3,9 @@ require 'oystercard'
 describe Oystercard do
   let(:station) { double :station }
   let(:oyster) { Oystercard.new }
-  
+  let(:entry_station) { double :station}
+  let(:exit_station) { double :station}
+  let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
 
   it 'has a balance of zero' do
     expect(oyster.balance).to eq(0)
@@ -41,24 +43,26 @@ describe Oystercard do
   it 'is not in journey when touched out' do 
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
-    oyster.touch_out
+    oyster.touch_out(station)
     expect(oyster.in_journey).to eq(false)
   end
 
   it 'does not touch in if balance if less than 1' do
     expect { oyster.touch_in(station) }.to raise_error("Insufficient funds. Touch in denied.")
   end 
-  
-  it 'stores the entry station' do
-    oyster.top_up(Oystercard::MINIMUM_CHARGE)
-    oyster.touch_in(station)
-    expect(oyster.entry_station).to eq(station)
-  end
 
   it 'deducts fee from card on touch out' do
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
-    expect{ oyster.touch_out }.to change{ oyster.balance }.by(-Oystercard::MINIMUM_CHARGE)
+    expect{ oyster.touch_out(station) }.to change{ oyster.balance }.by(-Oystercard::MINIMUM_CHARGE)
   end
+
+  it 'stores a journey' do
+    oyster.top_up(Oystercard::MINIMUM_CHARGE)
+    oyster.touch_in(entry_station)
+    oyster.touch_out(exit_station)
+    expect( oyster.journey_history).to include journey
+  end
+
 end
 
