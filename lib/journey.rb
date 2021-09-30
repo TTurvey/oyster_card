@@ -3,7 +3,8 @@ class Journey
   attr_reader :journey
 
   def initialize 
-    @journey = { :entry_station => 0 , :exit_station => 0}
+    @journey = { :entry_station => 0 , :exit_station => 0 }
+    @in_journey = false
   end
 
   def start(station)

@@ -5,7 +5,7 @@ class Oystercard
 CARD_LIMIT = 90
 MINIMUM_CHARGE = 5
 MINIMUM_BALANCE = 1
-  attr_reader :balance, :journey_history
+  attr_reader :balance, :journey_history, :journey
 
   def initialize
     @balance = 0

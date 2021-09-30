@@ -30,21 +30,19 @@ describe Oystercard do
     expect { oyster.deduct }.to raise_error("No money to deduct.")
   end
 
-  it 'is initially not in journey' do 
-    expect(oyster.in_journey).to eq(false)
-  end
-
   it 'is in journey when touched in' do
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
-    expect(oyster.in_journey).to eq(true)
+    journey_object = oyster.journey
+    expect(journey_object.in_journey).to eq(true)
   end
 
   it 'is not in journey when touched out' do 
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
+    journey_object = oyster.journey
     oyster.touch_out(station)
-    expect(oyster.in_journey).to eq(false)
+    expect(journey_object.in_journey).to eq(false)
   end
 
   it 'does not touch in if balance if less than 1' do
