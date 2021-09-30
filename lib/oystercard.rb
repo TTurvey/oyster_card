@@ -5,6 +5,7 @@ class Oystercard
 CARD_LIMIT = 90
 MINIMUM_CHARGE = 5
 MINIMUM_BALANCE = 1
+
   attr_reader :balance, :journey_history, :journey, :journey_object
 
   def initialize(journey = Journey.new)
@@ -34,13 +35,16 @@ MINIMUM_BALANCE = 1
   def touch_in(station)
     fail "Insufficient funds. Touch in denied." unless sufficient_funds?
       journey_object.start(station)
-      @journey_object
   end
 
   def touch_out(station)
     deduct
     @journey_object.stop(station)
-    @journey_history <<  @journey.journey
+    @journey_history <<  @journey_object.journey
+  end
+
+  def calculate_fare
+    @journey_object.fare
   end
 
   def sufficient_funds?

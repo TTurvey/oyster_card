@@ -30,19 +30,19 @@ describe Oystercard do
     expect { oyster.deduct }.to raise_error("No money to deduct.")
   end
 
-  it 'is in journey when touched in' do
+  it 'has an initial station when touched in' do
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
-    journey_object = oyster.journey
-    expect(journey_object.in_journey).to eq(true)
+    journey_object = oyster.journey_object
+    expect(journey_object.journey[:entry_station]).to eq(station)
   end
 
-  it 'is not in journey when touched out' do 
+  it 'has an exit station when touched out' do 
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
-    journey_object = oyster.journey
+    journey_object = oyster.journey_object
     oyster.touch_out(station)
-    expect(journey_object.in_journey).to eq(false)
+    expect(journey_object.journey[:exit_station]).to eq(station)
   end
 
   it 'does not touch in if balance if less than 1' do
@@ -59,21 +59,29 @@ describe Oystercard do
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(entry_station)
     oyster.touch_out(exit_station)
-    expect( oyster.journey_history).to include journey
+    expect(oyster.journey_history).to include journey
   end
 
   it 'touching in but not touching out gives a penalty fare' do
     large_amount = 80
     oyster.top_up(large_amount)
     oyster.touch_in(entry_station)
-    expect(oyster.journey.fare).to eq(6)
+    expect(oyster.calculate_fare).to eq(6)
   end
 
   it 'not touching in but touching out gives a penalty fare' do
     large_amount = 80
     oyster.top_up(large_amount)
     oyster.touch_out(exit_station)
-    expect(oyster.journey.fare).to eq(6)
+    expect(oyster.calculate_fare).to eq(6)
+  end
+
+  it "calculates a journey fare" do
+    large_amount = 80
+    oyster.top_up(large_amount)
+    oyster.touch_in(entry_station)
+    oyster.touch_out(exit_station)
+    expect(oyster.calculate_fare).to eq Oystercard::MINIMUM_CHARGE
   end
 
 end
