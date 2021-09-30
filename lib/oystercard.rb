@@ -1,17 +1,18 @@
 require_relative 'station'
 require_relative 'journey'
+require_relative 'journeylog'
 
 class Oystercard
 CARD_LIMIT = 90
 MINIMUM_CHARGE = 5
 MINIMUM_BALANCE = 1
 
-  attr_reader :balance, :journey_history, :journey, :journey_object
+  attr_reader :balance, :journey_history, :journey, :journey_object, :journeylog
 
-  def initialize(journey = Journey.new)
+  def initialize(journeylog = JourneyLog.new)
     @balance = 0
     @journey_history = []
-    @journey_object = journey
+    @journeylog = journeylog
   end
 
   def top_up(value)
@@ -34,17 +35,17 @@ MINIMUM_BALANCE = 1
 
   def touch_in(station)
     fail "Insufficient funds. Touch in denied." unless sufficient_funds?
-      journey_object.start(station)
+      journeylog.start(station)
   end
 
   def touch_out(station)
     deduct
-    @journey_object.stop(station)
-    @journey_history <<  @journey_object.journey
+    @journeylog.stop(station)
   end
 
   def calculate_fare
-    @journey_object.fare
+    @journeylog.journey_object.fare
+    @journeylog.complete
   end
 
   def sufficient_funds?
