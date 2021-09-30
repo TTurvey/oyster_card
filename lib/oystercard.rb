@@ -5,11 +5,12 @@ class Oystercard
 CARD_LIMIT = 90
 MINIMUM_CHARGE = 5
 MINIMUM_BALANCE = 1
-  attr_reader :balance, :journey_history, :journey
+  attr_reader :balance, :journey_history, :journey, :journey_object
 
-  def initialize
+  def initialize(journey = Journey.new)
     @balance = 0
     @journey_history = []
+    @journey_object = journey
   end
 
   def top_up(value)
@@ -30,15 +31,15 @@ MINIMUM_BALANCE = 1
     @balance == 0
   end
 
-  def touch_in(station, journey = Journey.new)
+  def touch_in(station)
     fail "Insufficient funds. Touch in denied." unless sufficient_funds?
-      journey.start(station)
-      @journey = journey
+      journey_object.start(station)
+      @journey_object
   end
 
   def touch_out(station)
     deduct
-    @journey.stop(station)
+    @journey_object.stop(station)
     @journey_history <<  @journey.journey
   end
 

@@ -62,5 +62,19 @@ describe Oystercard do
     expect( oyster.journey_history).to include journey
   end
 
+  it 'touching in but not touching out gives a penalty fare' do
+    large_amount = 80
+    oyster.top_up(large_amount)
+    oyster.touch_in(entry_station)
+    expect(oyster.journey.fare).to eq(6)
+  end
+
+  it 'not touching in but touching out gives a penalty fare' do
+    large_amount = 80
+    oyster.top_up(large_amount)
+    oyster.touch_out(exit_station)
+    expect(oyster.journey.fare).to eq(6)
+  end
+
 end
 
