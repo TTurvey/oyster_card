@@ -5,7 +5,9 @@ describe Oystercard do
   let(:oyster) { Oystercard.new }
   let(:entry_station) { double :station}
   let(:exit_station) { double :station}
-  let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
+  let(:journey) { double "test", :entry_station => entry_station, :exit_station => exit_station }
+  let(:journey_class) { double :journey, :journey }
+  let(:journeylog) { double :journeylog, :journey_class}
 
   it 'has a balance of zero' do
     expect(oyster.balance).to eq(0)
@@ -23,7 +25,7 @@ describe Oystercard do
   it 'deducts money from card' do
     large_amount = 80
     oyster.top_up(large_amount)
-    expect(oyster.deduct).to eq(large_amount - Oystercard::MINIMUM_CHARGE)
+    expect(oyster.deduct).to eq(large_amount - Oystercard::FINE_CHARGE)
   end
 
   it 'throws an error if money deducted from empty balance' do
@@ -33,16 +35,14 @@ describe Oystercard do
   it 'has an initial station when touched in' do
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
-    journey_object = oyster.journey_object
-    expect(journey_object.journey[:entry_station]).to eq(station)
+    expect(journey_class.journey[:entry_station]).to eq(station)
   end
 
   it 'has an exit station when touched out' do 
     oyster.top_up(Oystercard::MINIMUM_CHARGE)
     oyster.touch_in(station)
-    journey_object = oyster.journey_object
     oyster.touch_out(station)
-    expect(journey_object.journey[:exit_station]).to eq(station)
+    expect(journey_class.journey[:exit_station]).to eq(station)
   end
 
   it 'does not touch in if balance if less than 1' do
@@ -76,13 +76,7 @@ describe Oystercard do
     expect(oyster.calculate_fare).to eq(6)
   end
 
-  it "calculates a journey fare" do
-    large_amount = 80
-    oyster.top_up(large_amount)
-    oyster.touch_in(entry_station)
-    oyster.touch_out(exit_station)
-    expect(oyster.calculate_fare).to eq Oystercard::MINIMUM_CHARGE
-  end
+  
 
 end
 

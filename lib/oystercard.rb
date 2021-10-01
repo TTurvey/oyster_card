@@ -5,14 +5,17 @@ require_relative 'journeylog'
 class Oystercard
 CARD_LIMIT = 90
 MINIMUM_CHARGE = 5
+FINE_CHARGE = 6
 MINIMUM_BALANCE = 1
 
-  attr_reader :balance, :journey_history, :journey, :journey_object, :journeylog
+  attr_reader :balance
+  attr_reader :journey_class
+  attr_reader :journeylog_class, :journey_history
 
-  def initialize(journeylog = JourneyLog.new)
+  def initialize(journeylog_class = JourneyLog.new)
     @balance = 0
     @journey_history = []
-    @journeylog = journeylog
+    @journeylog_class = journeylog_class
   end
 
   def top_up(value)
@@ -26,7 +29,7 @@ MINIMUM_BALANCE = 1
 
   def deduct
     fail "No money to deduct." if empty?
-    @balance -= MINIMUM_CHARGE
+    @balance -= @journeylog_class.journey_class.fare
   end
 
   def empty?
@@ -35,17 +38,13 @@ MINIMUM_BALANCE = 1
 
   def touch_in(station)
     fail "Insufficient funds. Touch in denied." unless sufficient_funds?
-      journeylog.start(station)
+      journeylog_class.start(station)
   end
 
   def touch_out(station)
     deduct
-    @journeylog.stop(station)
-  end
-
-  def calculate_fare
-    @journeylog.journey_object.fare
-    @journeylog.complete
+    @journeylog_class.stop(station)
+    @journeylog_class.complete
   end
 
   def sufficient_funds?
