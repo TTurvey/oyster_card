@@ -1,23 +1,37 @@
-# require 'journeylog'
+require 'journeylog'
 
 
-# describe JourneyLog do
+describe JourneyLog do
 
-#   let(:journey){ double :journey } #this may need to have some methods
-#   let(:station){ double :station }
-#   let(:journey_class){double :journey_class, new: journey}
-#   subject {described_class.new(journey_class: journey_class)}
+  let(:station) {double :station}
 
-#   describe '#start' do
-#     it 'starts a journey' do
-#       expect(journey_class).to receive(:new).with(entry_station: station)
-#       subject.start(station)
-#     end
+  describe 'fare' do
+    it 'calculates fare' do
+      journey_double = double("Journey Class")
+      journey = JourneyLog.new(journey_double)
+      expect(journey).to receive(:fare)
 
-#     it 'records a journey' do
-#       allow(journey_class).to receive(:new).and_return journey
-#       subject.start(station)
-#       expect(subject.journeys).to include journey
-#     end
-#   end
-# end
+      journey.fare
+    end
+  end
+
+  describe 'start' do
+    it 'takes a station' do
+      journey_double = double("Journey Class")
+      journey = JourneyLog.new(journey_double)
+      expect(journey).to receive(:start).with(station)
+
+      journey.start(station)
+    end
+  end
+
+  describe 'stop' do
+    it 'takes a station' do
+      journey_double = double("Journey Class")
+      journey = JourneyLog.new(journey_double)
+      expect(journey).to receive(:stop).with(station)
+
+      journey.stop(station)
+    end
+  end
+end
